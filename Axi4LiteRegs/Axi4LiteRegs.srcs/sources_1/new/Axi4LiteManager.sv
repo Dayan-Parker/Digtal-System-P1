@@ -56,7 +56,7 @@ module Axi4LiteManager #
 
 // FSM State
     //Read vs Write FSM
-    typedef enum logic [5:0] {IDLE, R, WR ,WR1,WR2,WRESP,RD1,RD2} statetype;
+    typedef enum logic [5:0] {IDLE, R, WR ,WR1,WR2, Wait1, Wait2, WRESP,RD1,RD2} statetype;
 
     
     statetype nextState, currState;
@@ -66,9 +66,8 @@ module Axi4LiteManager #
     logic [ C_M_AXI_DATA_WIDTH-1:0] wrDataD, wrDataQ,rdDataD, rdDataQ;
     logic [C_M_AXI_ADDR_WIDTH-1:0] wrAddrD, wrAddrQ, rdAddrD, rdAddrQ;
     
-    //Create Delay 
-    logic [1:0] count = 0;
-    
+    assign rdData = rdDataQ;
+
     always_ff @(posedge M_AXI_ACLK) begin
         if (!M_AXI_ARESETN) begin
             currState <= IDLE;
@@ -85,32 +84,32 @@ module Axi4LiteManager #
 
         end
         
-        //Counter increment
-        if (M_AXI_WREADY) begin
-            count <= count + 1;
-        end
-        
     end
     
     always_comb begin
         nextState = currState;
         //write
-        wrDataQ = wrDataD;
-        wrAddrQ = wrAddrD;
+//        wrDataQ = wrDataD;
+//        wrAddrQ = wrAddrD;
+        wrDataD = wrDataQ;
+        wrAddrD = wrAddrQ;
+        
+
         M_AXI_AWADDR=0;
         M_AXI_AWVALID =0;
         M_AXI_WDATA =0;
         M_AXI_WVALID =0;
         M_AXI_BREADY =0;
-        count = 0;
 
     
         //read
         M_AXI_ARADDR = rdAddrQ;
         M_AXI_RREADY =0;
         M_AXI_ARVALID =0;
-        rdAddrQ = rdAddrD;
-        rdDataQ = rdDataD;
+//        rdAddrQ = rdAddrD;
+//        rdDataQ = rdDataD;
+        rdAddrD = rdAddrQ;
+        rdDataD = rdDataQ;
 
         
         
@@ -138,7 +137,7 @@ module Axi4LiteManager #
             end
             
             RD2: begin
-                rdDataD = rdData;
+                rdDataD = M_AXI_RDATA;
                 
             end
             
@@ -154,10 +153,17 @@ module Axi4LiteManager #
                 end
             end
             WR2: begin
-                if (count >= 'h3) begin
                     M_AXI_BREADY = 1;
-                    if (M_AXI_BVALID) nextState = WRESP;
-                end
+                    if (M_AXI_BVALID) nextState = Wait1;
+            end
+            
+            Wait1: begin
+                nextState = Wait2;
+            end
+            
+            Wait2: begin
+                nextState = WRESP;
+
             end
             
             WRESP: begin
