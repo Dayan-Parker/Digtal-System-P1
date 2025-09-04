@@ -96,21 +96,28 @@ always begin
     # (CLK_PERIOD_2) S_AXI_ACLK = ~S_AXI_ACLK;
 end 
 
+
 initial begin
+    S_AXI_WSTRB = 4'b1111;
     S_AXI_ARESETN =0;
     S_AXI_ACLK = 0;
     wr=0;
+    
     wrAddr = 0;
     wrData = 0;
+    rdAddr = 0;
+    rd = 0;
+    
+
     
     
     //Generate Reset
-    #(CLK_PERIOD_2 +2) S_AXIARESETN = 1;
-    #(CLKPERIOD*10);
+    #(CLK_PERIOD_2 +2) S_AXI_ARESETN = 1;
+    #(CLK_PERIOD*10);
     
     //write cycle to Adrres 0
-    wrAdrr = 0;
-    wrData = 'hdeadbeef;
+    wrAddr = 0;
+    wrData = 32'hdeadbeef;
     wr =1;
     #(CLK_PERIOD)
     wrAddr = 0;
@@ -119,7 +126,15 @@ initial begin
     
     #(CLK_PERIOD*10)
     
-    $stop
+    //read cycle to Adress 0
+    rdAddr = 0;
+    rd = 1;
+    S_AXI_RDATA = 32'hdeadbeef;
+    #(CLK_PERIOD)
+    rdAddr = 0;
+    rd = 0;
+
+    $stop;
 end
 
 endmodule

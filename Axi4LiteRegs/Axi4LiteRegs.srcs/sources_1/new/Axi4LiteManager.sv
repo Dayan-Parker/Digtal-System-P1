@@ -93,6 +93,8 @@ module Axi4LiteManager #
 //        wrAddrQ = wrAddrD;
         wrDataD = wrDataQ;
         wrAddrD = wrAddrQ;
+        wrDone = 0;
+        rdDone = 0;
         
 
         M_AXI_AWADDR=0;
@@ -121,7 +123,7 @@ module Axi4LiteManager #
                     nextState = WR1;
                 end
                 else if (rd) begin
-                    rdAddrD = rdAddrQ;
+                    rdAddrD = rdAddr;
                     nextState = RD1;
                 end
             end
@@ -138,7 +140,7 @@ module Axi4LiteManager #
             
             RD2: begin
                 rdDataD = M_AXI_RDATA;
-                
+                rdDone = 1;
             end
             
             
@@ -153,7 +155,6 @@ module Axi4LiteManager #
                 end
             end
             WR2: begin
-                    M_AXI_BREADY = 1;
                     if (M_AXI_BVALID) nextState = Wait1;
             end
             
@@ -167,6 +168,8 @@ module Axi4LiteManager #
             end
             
             WRESP: begin
+                M_AXI_BREADY = 1;
+                wrDone = 1;
             end
             
             default: begin
