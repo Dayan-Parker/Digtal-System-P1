@@ -96,7 +96,7 @@ always begin
     # (CLK_PERIOD_2) S_AXI_ACLK = ~S_AXI_ACLK;
 end 
 
-inital begin
+initial begin
     S_AXI_ARESETN =0;
     S_AXI_ACLK = 0;
     wr=0;
