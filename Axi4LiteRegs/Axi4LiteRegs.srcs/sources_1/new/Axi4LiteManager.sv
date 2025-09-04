@@ -155,7 +155,6 @@ module Axi4LiteManager #
                 end
             end
             WR2: begin
-                    M_AXI_BREADY = 1;
                     if (M_AXI_BVALID) nextState = Wait1;
             end
             
@@ -169,6 +168,7 @@ module Axi4LiteManager #
             end
             
             WRESP: begin
+                M_AXI_BREADY = 1;
                 wrDone = 1;
             end
             
