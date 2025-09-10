@@ -156,7 +156,7 @@ initial begin
     rdAddrM = 0;
     rdM = 0;
     
-    #(CLK_PERIOD*7);
+    #(CLK_PERIOD*10);
     $stop;
 end
 

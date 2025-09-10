@@ -141,6 +141,7 @@ module Axi4LiteManager #
             RD2: begin
                 rdDataD = M_AXI_RDATA;
                 rdDone = 1;
+                nextState = IDLE;
             end
             
             

@@ -12,14 +12,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="885.246 ns"></ZoomEndTime>
-      <Cursor1Time time="655.921 ns"></Cursor1Time>
+      <ZoomEndTime time="985.236 ns"></ZoomEndTime>
+      <Cursor1Time time="134.282 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="284"></NameColumnWidth>
-      <ValueColumnWidth column_width="119"></ValueColumnWidth>
+      <ValueColumnWidth column_width="114"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="33" />
+   <WVObjectSize size="34" />
    <wvobject type="logic" fp_name="/Axi4LiteReg_tb/S_AXI_ACLK">
       <obj_property name="ElementShortName">S_AXI_ACLK</obj_property>
       <obj_property name="ObjectShortName">S_AXI_ACLK</obj_property>
@@ -59,6 +59,10 @@
    <wvobject type="logic" fp_name="/Axi4LiteReg_tb/wrDoneM">
       <obj_property name="ElementShortName">wrDoneM</obj_property>
       <obj_property name="ObjectShortName">wrDoneM</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/Axi4LiteReg_tb/rdDoneM">
+      <obj_property name="ElementShortName">rdDoneM</obj_property>
+      <obj_property name="ObjectShortName">rdDoneM</obj_property>
    </wvobject>
    <wvobject fp_name="divider144" type="divider">
       <obj_property name="label">Supporter</obj_property>
