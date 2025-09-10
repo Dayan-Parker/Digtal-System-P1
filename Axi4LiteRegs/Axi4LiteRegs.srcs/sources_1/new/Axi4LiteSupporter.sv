@@ -102,15 +102,19 @@ module Axi4LiteSupporter #
         S_AXI_BRESP = 0;
         S_AXI_RRESP = 0;
         wr = 0;
+        rd = 0;
         
         case(currState)
             IDLE: begin
                 if (S_AXI_WVALID == 1 && S_AXI_AWVALID == 1) begin
                     wrDataD = wrData;
                     wrAddrD = wrAddr;
-                    nextState = WR1;
+                    S_AXI_AWREADY = 1;
+                    S_AXI_WREADY = 1;
+                    wr = 1;
                 end
                 else if (S_AXI_ARVALID == 1) begin
+                    rd=1;
                     rdAddrD = rdAddrQ;
                     nextState = RD1;
                 end
@@ -118,11 +122,7 @@ module Axi4LiteSupporter #
             
             // Write
             WR1: begin
-                S_AXI_AWREADY = 1;
-                S_AXI_WREADY = 1;
-                wr = 1;
-                S_AXI_BVALID = 1;
-                
+                S_AXI_BVALID = 1; 
                 if (S_AXI_BREADY == 1) begin
                     nextState = WR2;
                 end

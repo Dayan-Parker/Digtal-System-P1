@@ -49,26 +49,26 @@ logic   [1:0] S_AXI_BRESP ;
 logic   S_AXI_BVALID ;
 logic   S_AXI_BREADY ;
 // Simple Bus signals
-logic   [C_S_AXI_ADDR_WIDTH-1:0]    wrAddr ;
-logic   [C_S_AXI_DATA_WIDTH-1:0]    wrData ;
-logic                               wr ;
-logic                               wrDone ;
-logic   [C_S_AXI_ADDR_WIDTH-1:0]    rdAddr ;
-logic   [C_S_AXI_DATA_WIDTH-1:0]    rdData ;
-logic                               rd ;
-logic                               rdDone ;
+logic   [C_S_AXI_ADDR_WIDTH-1:0]    wrAddrM;
+logic   [C_S_AXI_DATA_WIDTH-1:0]    wrDataM;
+logic                               wrM ;
+logic                               wrDoneM;
+logic   [C_S_AXI_ADDR_WIDTH-1:0]    rdAddrM ;
+logic   [C_S_AXI_DATA_WIDTH-1:0]    rdDataM;
+logic                               rdM;
+logic                               rdDoneM;
 
 Axi4LiteManager #(.C_M_AXI_ADDR_WIDTH(C_S_AXI_ADDR_WIDTH), .C_M_AXI_DATA_WIDTH(C_S_AXI_DATA_WIDTH)) Axi4LiteManager1
         (
             // Simple Bus
-            .wrAddr(wrAddr),                    // input    [C_M_AXI_ADDR_WIDTH-1:0]
-            .wrData(wrData),                    // input    [C_M_AXI_DATA_WIDTH-1:0]
-            .wr(wr),                            // input    
-            .wrDone(wrDone),                    // output
-            .rdAddr(rdAddr),                    // input    [C_M_AXI_ADDR_WIDTH-1:0]
-            .rdData(rdData),                    // output   [C_M_AXI_DATA_WIDTH-1:0]
-            .rd(rd),                            // input
-            .rdDone(rdDone),                    // output
+            .wrAddr(wrAddrM),                    // input    [C_M_AXI_ADDR_WIDTH-1:0]
+            .wrData(wrDataM),                    // input    [C_M_AXI_DATA_WIDTH-1:0]
+            .wr(wrM),                            // input    
+            .wrDone(wrDoneM),                    // output
+            .rdAddr(rdAddrM),                    // input    [C_M_AXI_ADDR_WIDTH-1:0]
+            .rdData(rdDataM),                    // output   [C_M_AXI_DATA_WIDTH-1:0]
+            .rd(rdM),                            // input
+            .rdDone(rdDoneM),                    // output
             // Axi4Lite Bus
             .M_AXI_ACLK(S_AXI_ACLK),            // input
             .M_AXI_ARESETN(S_AXI_ARESETN),      // input
@@ -90,6 +90,33 @@ Axi4LiteManager #(.C_M_AXI_ADDR_WIDTH(C_S_AXI_ADDR_WIDTH), .C_M_AXI_DATA_WIDTH(C
             .M_AXI_BVALID(S_AXI_BVALID),        // input
             .M_AXI_BREADY(S_AXI_BREADY)         // output
         );
+        
+ 
+Axi4LiteRegs #(.C_S_AXI_ADDR_WIDTH(C_S_AXI_ADDR_WIDTH),.C_S_AXI_DATA_WIDTH(C_S_AXI_DATA_WIDTH)) Axi4LiteRegs (
+        .CLK(S_AXI_ACLK),
+        .reset_n(S_AXI_ARESETN),
+        // Axi4Lite Bus
+        .S_AXI_ACLK(S_AXI_ACLK),            // input
+        .S_AXI_ARESETN(S_AXI_ARESETN),      // input
+        .S_AXI_AWADDR(S_AXI_AWADDR),        // input    [C_S_AXI_ADDR_WIDTH-1:0]
+        .S_AXI_AWVALID(S_AXI_AWVALID),      // input
+        .S_AXI_AWREADY(S_AXI_AWREADY),      // output
+        .S_AXI_WDATA(S_AXI_WDATA),          // input    [C_S_AXI_DATA_WIDTH-1:0]
+        .S_AXI_WSTRB(S_AXI_WSTRB),          // input    [3:0]
+        .S_AXI_WVALID(S_AXI_WVALID),        // input
+        .S_AXI_WREADY(S_AXI_WREADY),        // output        
+        .S_AXI_ARADDR(S_AXI_ARADDR),        // input    [C_S_AXI_ADDR_WIDTH-1:0]
+        .S_AXI_ARVALID(S_AXI_ARVALID),      // input
+        .S_AXI_ARREADY(S_AXI_ARREADY),      // output
+        .S_AXI_RDATA(S_AXI_RDATA),          // output   [C_S_AXI_DATA_WIDTH-1:0]
+        .S_AXI_RRESP(S_AXI_RRESP),          // output   [1:0]
+        .S_AXI_RVALID(S_AXI_RVALID),        // output    
+        .S_AXI_RREADY(S_AXI_RREADY),        // input
+        .S_AXI_BRESP(S_AXI_BRESP),          // output   [1:0]
+        .S_AXI_BVALID(S_AXI_BVALID),        // output
+        .S_AXI_BREADY(S_AXI_BREADY)         // input
+        ) ; 
+
 parameter CLK_PERIOD_2 = (CLK_PERIOD)/2;
 
 always begin
@@ -101,38 +128,34 @@ initial begin
     S_AXI_WSTRB = 4'b1111;
     S_AXI_ARESETN =0;
     S_AXI_ACLK = 0;
-    wr=0;
-    
-    wrAddr = 0;
-    wrData = 0;
-    rdAddr = 0;
-    rd = 0;
-    
-
-    
+    wrM=0;
+    wrAddrM = 0;
+    wrDataM = 0;
+    rdAddrM = 0;
+    rdM = 0;
     
     //Generate Reset
     #(CLK_PERIOD_2 +2) S_AXI_ARESETN = 1;
     #(CLK_PERIOD*10);
     
     //write cycle to Adrres 0
-    wrAddr = 0;
-    wrData = 32'hdeadbeef;
-    wr =1;
+    wrAddrM = 0;
+    wrDataM = 32'hdeadbeef;
+    wrM =1;
     #(CLK_PERIOD)
-    wrAddr = 0;
-    wrData = 0;
-    wr = 0;
+    wrAddrM = 0;
+    wrDataM = 0;
+    wrM = 0;
     
     #(CLK_PERIOD*10)
     
     //read cycle to Adress 0
-    rdAddr = 0;
-    rd = 1;
+    rdAddrM = 0;
+    rdM = 1;
     S_AXI_RDATA = 32'hdeadbeef;
     #(CLK_PERIOD)
-    rdAddr = 0;
-    rd = 0;
+    rdAddrM = 0;
+    rdM = 0;
 
     $stop;
 end
