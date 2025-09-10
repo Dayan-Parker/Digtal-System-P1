@@ -139,7 +139,7 @@ initial begin
     #(CLK_PERIOD*7);
     
     //write cycle to Adrres 0
-    wrAddrM = 0;
+    wrAddrM = 4'd1;
     wrDataM = 32'hdeadbeef;
     wrM =1;
     #(CLK_PERIOD)
@@ -150,7 +150,7 @@ initial begin
     #(CLK_PERIOD*10)
     
     //read cycle to Adress 0
-    rdAddrM = 0;
+    rdAddrM = 4'd1;
     rdM = 1;
     #(CLK_PERIOD)
     rdAddrM = 0;

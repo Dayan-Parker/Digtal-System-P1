@@ -1,2 +1,1 @@
 Breakpoint File Version 1.0
-142,true,"/home/garry/School/year-25-26/digital-system-deisgn/Digtal-System-P1/Axi4LiteRegs/Axi4LiteRegs.srcs/sources_1/new/Axi4LiteManager.sv"
