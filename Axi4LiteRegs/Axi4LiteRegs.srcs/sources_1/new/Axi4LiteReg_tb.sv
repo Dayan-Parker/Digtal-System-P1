@@ -136,7 +136,7 @@ initial begin
     
     //Generate Reset
     #(CLK_PERIOD_2 +2) S_AXI_ARESETN = 1;
-    #(CLK_PERIOD*10);
+    #(CLK_PERIOD*7);
     
     //write cycle to Adrres 0
     wrAddrM = 0;
@@ -152,11 +152,11 @@ initial begin
     //read cycle to Adress 0
     rdAddrM = 0;
     rdM = 1;
-    S_AXI_RDATA = 32'hdeadbeef;
     #(CLK_PERIOD)
     rdAddrM = 0;
     rdM = 0;
-
+    
+    #(CLK_PERIOD*7);
     $stop;
 end
 

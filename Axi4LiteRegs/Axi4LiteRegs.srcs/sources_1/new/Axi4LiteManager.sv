@@ -170,6 +170,7 @@ module Axi4LiteManager #
             WRESP: begin
                 M_AXI_BREADY = 1;
                 wrDone = 1;
+                nextState = IDLE;
             end
             
             default: begin

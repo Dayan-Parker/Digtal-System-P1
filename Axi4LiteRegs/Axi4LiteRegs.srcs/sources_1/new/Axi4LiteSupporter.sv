@@ -60,25 +60,25 @@ module Axi4LiteSupporter #
     
     //Write & Read Flops
     
-    logic [C_S_AXI_DATA_WIDTH-1:0] wrDataD, wrDataQ,rdDataD, rdDataQ;
-    logic [C_S_AXI_ADDR_WIDTH-1:0] wrAddrD, wrAddrQ, rdAddrD, rdAddrQ;
+//    logic [C_S_AXI_DATA_WIDTH-1:0] wrDataD, wrDataQ,rdDataD, rdDataQ;
+//    logic [C_S_AXI_ADDR_WIDTH-1:0] wrAddrD, wrAddrQ, rdAddrD, rdAddrQ;
     
-    assign rdData = rdDataQ;
+//    assign rdData = rdDataQ;
 
     always_ff @(posedge S_AXI_ACLK) begin
     
         if (!S_AXI_ARESETN) begin
             currState <= IDLE;
-            wrDataQ <= 0;
-            wrAddrQ <= 0;
-            rdAddrQ <= 0;
-            rdDataQ <= 0;
+//            wrDataQ <= 0;
+//            wrAddrQ <= 0;
+//            rdAddrQ <= 0;
+//            rdDataQ <= 0;
         end else begin
             currState <= nextState;
-            wrDataQ <= wrDataD;
-            wrAddrQ <= wrAddrD;
-            rdAddrQ <= rdAddrD;
-            rdDataQ <= rdDataD;
+//            wrDataQ <= wrDataD;
+//            wrAddrQ <= wrAddrD;
+//            rdAddrQ <= rdAddrD;
+//            rdDataQ <= rdDataD;
         end
         
     end
@@ -87,15 +87,19 @@ module Axi4LiteSupporter #
         nextState = currState;
         
         // Write
-        wrDataD = wrDataQ;
-        wrAddrD = wrAddrQ;
+//        wrDataD = wrDataQ;
+//        wrAddrD = wrAddrQ;
+        wrAddr = 0;
+        wrData = 0;
         S_AXI_AWREADY = 0;
         S_AXI_WREADY = 0;
         S_AXI_BVALID = 0;
         
         // Read
-        rdAddrD = rdAddrQ;
-        rdDataD = rdDataQ;
+//        rdAddrD = rdAddrQ;
+//        rdDataD = rdDataQ;
+        rdAddr = 0;
+        S_AXI_RDATA = 0;    
         S_AXI_ARREADY = 0;
         S_AXI_RDATA = 0;
         S_AXI_RVALID = 0;
@@ -107,15 +111,20 @@ module Axi4LiteSupporter #
         case(currState)
             IDLE: begin
                 if (S_AXI_WVALID == 1 && S_AXI_AWVALID == 1) begin
-                    wrDataD = wrData;
-                    wrAddrD = wrAddr;
+//                    wrDataD = wrData;
+//                    wrAddrD = wrAddr;
+                    wrAddr = S_AXI_AWADDR;
+                    wrData = S_AXI_WDATA;
                     S_AXI_AWREADY = 1;
                     S_AXI_WREADY = 1;
                     wr = 1;
+                    nextState = WR1;
                 end
                 else if (S_AXI_ARVALID == 1) begin
                     rd=1;
-                    rdAddrD = rdAddrQ;
+//                    rdAddrD = rdAddrQ;
+                    rdAddr = S_AXI_ARADDR;
+                    S_AXI_RDATA = rdData;
                     nextState = RD1;
                 end
             end
@@ -139,7 +148,6 @@ module Axi4LiteSupporter #
                 S_AXI_ARREADY = 1;
                 S_AXI_RVALID = 1;
                 S_AXI_RRESP = 0;
-                S_AXI_RDATA = rdDataQ;
                 if (S_AXI_RREADY == 1) begin
                     nextState = RD2;
                 end
