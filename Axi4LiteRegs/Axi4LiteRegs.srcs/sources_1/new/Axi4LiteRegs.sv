@@ -104,7 +104,7 @@ module Axi4LiteRegs #
 
     unique case (rdAddr)
       6'd0:    rdData = reg0Q;
-      6'd1:    rdData = reg1Q;
+      6'd4:    rdData = reg1Q;
       default: rdData = '0;
     endcase
 
@@ -112,7 +112,7 @@ module Axi4LiteRegs #
     if (wr) begin
       unique case (wrAddr)
         6'd0:    reg0D = wrData;
-        6'd1:    reg1D = wrData;
+        6'd4:    reg1D = wrData;
         default:;
       endcase
     end
